@@ -1,5 +1,5 @@
-import 'dart:typed_data';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:cruise/src/common/channel_action.dart';
 import 'package:cruise/src/models/Channel.dart';
@@ -7,7 +7,6 @@ import 'package:cruise/src/models/api/sub_status.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wheel/wheel.dart';
 
 class ChannelItemCard extends HookWidget {
@@ -28,42 +27,33 @@ class ChannelItemCard extends HookWidget {
       HttpResult result = await ChannelAction.sub(channelId: channelId, subStatus: subStatus);
 
       if (result.result == Result.error) {
-        Fluttertoast.showToast(
-            msg: "订阅失败",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        ToastUtils.showToast("订阅失败");
       } else {
         isFav.value = subStatus.statusCode == "sub" ? 1 : 0;
         counter.value.isFav = isFav.value;
-        Fluttertoast.showToast(
-            msg: subStatus.statusCode == "sub" ? "订阅成功" : "取消订阅成功",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        ToastUtils.showToast(subStatus.statusCode == "sub" ? "订阅成功" : "取消订阅成功");
       }
     }
 
     final Image defaultImage = Image.asset('images/Icon-App-83.5x83.5@3x.png');
-   /* var foregroundImage = counter.value.favIconUrl == "" ? defaultImage : Image.network(
+    /* var foregroundImage = counter.value.favIconUrl == "" ? defaultImage : Image.network(
         global.staticResourceUrl + "/" + counter.value.localIconUrl,
       loadingBuilder: (context,child,loadingProgress)=>(loadingProgress == null) ? child : CircularProgressIndicator(),
       errorBuilder: (context, error, stackTrace) => defaultImage,
     );*/
     var foregroundImage;
-    if(counter.value.iconData != null && counter.value.iconData != "") {
+    if (counter.value.iconData != null && counter.value.iconData != "") {
       Uint8List base64Decode(String source) => base64.decode(source);
       Uint8List uint8list = base64Decode(counter.value.iconData);
       foregroundImage = Image.memory(uint8list);
-    }else{
+    } else {
       foregroundImage = defaultImage;
     }
+
+    ButtonStyle textButtonStyle = ElevatedButton.styleFrom(
+        foregroundColor: Theme.of(context).primaryColor, shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(5.0)));
+
+    ButtonStyle textButtonStyleColor = ElevatedButton.styleFrom(foregroundColor: Theme.of(context).primaryColor);
 
     return Card(
       key: Key(counter.value.id.toString()),
@@ -77,11 +67,11 @@ class ChannelItemCard extends HookWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Colors.transparent,
-                      foregroundImage:  foregroundImage.image,
-                    ),
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.transparent,
+                    foregroundImage: foregroundImage.image,
+                  ),
                   SizedBox(
                     width: screenWidth - 230,
                     child: Padding(
@@ -101,8 +91,8 @@ class ChannelItemCard extends HookWidget {
                       child: ButtonTheme(
                           minWidth: 100,
                           height: 40.0,
-                          child: RaisedButton.icon(
-                            color: Theme.of(context).primaryColor,
+                          child: ElevatedButton.icon(
+                            style: textButtonStyleColor,
                             icon: Icon(
                               EvaIcons.checkmarkCircle,
                               size: 16,
@@ -117,9 +107,8 @@ class ChannelItemCard extends HookWidget {
                       child: ButtonTheme(
                           minWidth: 100,
                           height: 40.0,
-                          child: RaisedButton(
-                            color: Theme.of(context).primaryColor,
-                            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(5.0)),
+                          child: ElevatedButton(
+                            style: textButtonStyle,
                             onPressed: () => touchSub(counter.value.id.toString(), SubStatus.SUB),
                             child: Text("订阅"),
                           )),

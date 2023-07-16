@@ -3,12 +3,12 @@ import 'package:cruise/src/common/nav/nav_util.dart';
 import 'package:cruise/src/common/style/global_style.dart';
 import 'package:cruise/src/component/user_agreement.dart';
 import 'package:cruise/src/page/reg/reg.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:wheel/wheel.dart';
 
 class LoginPage extends HookWidget {
-
   @override
   Widget build(BuildContext context) {
     final _formKey = useMemoized(() => GlobalKey<FormState>());
@@ -28,8 +28,7 @@ class LoginPage extends HookWidget {
             TextButton(
               style: GlobalStyle.textButtonStyle,
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => RegPage(phoneNumber: username.value)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => RegPage(phoneNumber: username.value)));
               },
               child: Text("注册", style: TextStyle(fontSize: 16.0)),
             ),
@@ -57,7 +56,7 @@ class LoginPage extends HookWidget {
                         ),
                         SizedBox(
                             height: 45,
-                            width: (screenWidth-20) * 0.72,
+                            width: (screenWidth - 20) * 0.72,
                             child: TextFormField(
                               autocorrect: false,
                               onChanged: (value) {
@@ -121,21 +120,17 @@ class LoginPage extends HookWidget {
                                   if (_formKey.currentState!.validate() && phoneValid.value) {
                                     submitting.value = true;
                                     String userName = countryCode.value + username.value;
-                                    AppLoginRequest appLoginRequest = new AppLoginRequest(
-                                        password: password.value,
-                                        username: userName,
-                                        loginType: LoginType.PHONE);
-                                    AuthResult result = await Auth.login(appLoginRequest: appLoginRequest);
-                                    if (result.result == Result.error) {
-                                      Scaffold.of(context).showSnackBar(
+                                    AppLoginRequest appLoginRequest =
+                                        new AppLoginRequest(password: password.value, username: userName, loginType: LoginType.PHONE, loginUrl: '/post/user/login');
+                                    Response resp = await Auth.login(appLoginRequest: appLoginRequest);
+                                    if (!RestClient.respSuccess(resp)) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
-                                          content: Text(result.message),
+                                          content: Text(resp.data["msg"]),
                                         ),
                                       );
                                     } else {
                                       NavUtil.navProfile(context);
-                                      //NavigationService.instance.navigateToReplacement("home");
-                                      //Navigator.pop(context);
                                     }
                                     submitting.value = false;
                                   }

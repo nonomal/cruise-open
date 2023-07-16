@@ -1,16 +1,16 @@
 import 'package:cruise/src/common/nav/nav_util.dart';
-import 'package:cruise/src/page/pay/page.dart';
-import 'package:cruise/src/page/user/discover/page.dart';
-import 'package:cruise/src/page/user/fav/page.dart';
+import 'package:cruise/src/page/user/discover/discovery.dart';
 import 'package:cruise/src/page/user/feedback/feedback_page.dart';
-import 'package:cruise/src/page/user/history/page.dart';
-import 'package:cruise/src/page/user/settings/about/page.dart';
 import 'package:cruise/src/page/user/settings/main/main_page.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wheel/wheel.dart';
+
+import '../../../pay/pay.dart';
+import '../../../pay/wechatpay/wechat_pay_page.dart';
+import '../../fav/fav.dart';
+import '../../history/hostorylist.dart';
 
 class CruiseSettingPage extends StatelessWidget {
   @override
@@ -36,7 +36,6 @@ class CruiseSettingPage extends StatelessWidget {
                                 bool isLoggedIn = await Auth.isLoggedIn();
                                 if (isLoggedIn) {
                                   NavUtil.navProfile(context);
-                                  //page = BottomNavigationDemo(type: BottomNavigationDemoType.withLabels);
                                 } else {
                                   NavUtil.navLogin(context);
                                 }
@@ -56,14 +55,7 @@ class CruiseSettingPage extends StatelessWidget {
                                   onTap: () async {
                                     bool isLoggedIn = await Auth.isLoggedIn();
                                     if (isLoggedIn) {
-                                      var data = {'name': "fav"};
-                                      Widget page =
-                                          FavArticlePage().buildPage(data);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => page),
-                                      );
+                                      Get.to(Fav());
                                     } else {
                                       NavUtil.navLogin(context);
                                     }
@@ -80,12 +72,7 @@ class CruiseSettingPage extends StatelessWidget {
                               trailing: Icon(Icons.keyboard_arrow_right),
                               title: Text("发现"),
                               onTap: () async {
-                                var data = {'name': "originalstories"};
-                                Widget page = DiscoverPage().buildPage(data);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => page),
-                                );
+                                Get.to(() => Discovery());
                               },
                             )))),
                 Padding(
@@ -102,14 +89,7 @@ class CruiseSettingPage extends StatelessWidget {
                                   onTap: () async {
                                     bool isLoggedIn = await Auth.isLoggedIn();
                                     if (isLoggedIn) {
-                                      var data = {'name': "history"};
-                                      Widget page =
-                                          HistoryPage().buildPage(data);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => page),
-                                      );
+                                      Get.to(() => HistoryList());
                                     } else {
                                       NavUtil.navLogin(context);
                                     }
@@ -141,12 +121,6 @@ class CruiseSettingPage extends StatelessWidget {
                               title: Text("关于cruise"),
                               onTap: () async {
                                 var data = {'name': "aboutPage"};
-                                Widget aboutPage = AboutPage().buildPage(data);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => aboutPage),
-                                );
                               },
                             )))),
                 Padding(
@@ -170,24 +144,35 @@ class CruiseSettingPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                         child: Container(
                             color: Colors.white,
-                            child: ListTile(
-                              leading: Icon(EvaIcons.heart),
-                              trailing: Icon(Icons.keyboard_arrow_right),
-                              title: Text("会员中心"),
-                              onTap: () async {
-                                bool isLoggedIn = await Auth.isLoggedIn();
-                                if (isLoggedIn) {
-                                  var data = {'name': "payPage"};
-                                  Widget payPage = PayPage().buildPage(data);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => payPage),
-                                  );
-                                } else {
-                                  NavUtil.navLogin(context);
-                                }
-                              },
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  leading: Icon(EvaIcons.heart),
+                                  trailing: Icon(Icons.keyboard_arrow_right),
+                                  title: Text("会员中心"),
+                                  onTap: () async {
+                                    bool isLoggedIn = await Auth.isLoggedIn();
+                                    if (isLoggedIn) {
+                                      Get.to(() => Pay());
+                                    } else {
+                                      NavUtil.navLogin(context);
+                                    }
+                                  },
+                                ),
+                                ListTile(
+                                  leading: Icon(Icons.payment),
+                                  trailing: Icon(Icons.keyboard_arrow_right),
+                                  title: Text("支付"),
+                                  onTap: () async {
+                                    bool isLoggedIn = await Auth.isLoggedIn();
+                                    if (isLoggedIn) {
+                                      Get.to(() => WechatPayPage());
+                                    } else {
+                                      NavUtil.navLogin(context);
+                                    }
+                                  },
+                                )
+                              ],
                             )))),
               ],
             ),

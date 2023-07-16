@@ -2,7 +2,6 @@ import 'package:cruise/src/common/channel_action.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wheel/wheel.dart';
 
 class AddChannel extends HookWidget {
@@ -21,27 +20,16 @@ class AddChannel extends HookWidget {
         );
 
         if (result.result == Result.error) {
-          Fluttertoast.showToast(
-              msg: "RSS添加失败，请检查地址是否正确",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0);
+          ToastUtils.showToast("RSS添加失败，请检查地址是否正确");
         } else {
-          Fluttertoast.showToast(
-              msg: "添加成功",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0);
+          ToastUtils.showToast("添加成功");
         }
         submitting.value = false;
       }
     }
+
+    ButtonStyle textButtonStyle =
+        ElevatedButton.styleFrom(onPrimary: Colors.black, shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)));
 
     return Scaffold(
         body: SafeArea(
@@ -89,9 +77,8 @@ class AddChannel extends HookWidget {
                           minWidth: screenWidth * 0.85,
                           height: 50.0,
                           child: Center(
-                              child: RaisedButton(
-                            color: Theme.of(context).primaryColor,
-                            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                              child: ElevatedButton(
+                            style: textButtonStyle,
                             onPressed: () async {
                               handleAddChannel();
                             },

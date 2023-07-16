@@ -35,13 +35,12 @@ platform :ios do
     )
 
     pgyer(
-        api_key: ENV['PGY_API_KEY'],
-        user_key: ENV['PGY_USER_KEY']
+        api_key: ENV['PGY_API_KEY']
     )
   end
 
   lane :beta do
-    xcode_select "/Applications/Xcode_12.4.app"
+    xcode_select "/Applications/Xcode_13.3.1.app"
     if is_ci
       create_keychain(
         name: ENV['MATCH_KEYCHAIN_NAME'],
@@ -69,8 +68,7 @@ platform :ios do
     )
 
     pgyer(
-        api_key: ENV['PGY_API_KEY'],
-        user_key: ENV['PGY_USER_KEY']
+        api_key: ENV['PGY_API_KEY']
     )
   end
 
